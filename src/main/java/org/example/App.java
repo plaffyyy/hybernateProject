@@ -5,6 +5,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.List;
+
 /**
  * Hello world!
  *
@@ -17,26 +19,19 @@ public class App {
         SessionFactory sessionFactory = configuration.buildSessionFactory();
         Session session = sessionFactory.getCurrentSession();
 
-//        session.beginTransaction();
-//
-//        Person person1 = new Person("Kostya", 19);
-//        Person person2 = new Person("Kostya Zimin", 19);
-//        Person person3 = new Person("Julia", 19);
-//
-//        session.save(person1);
-//        session.save(person2);
-//        session.save(person3);
-//
-//        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
 
-        session.beginTransaction();
+            List<Person> personList = session.createQuery("FROM Person WHERE name LIKE 'J%'").getResultList();
 
-        Person person = session.get(Person.class, 2);
-        person.setAge(29);
+            for (Person person: personList) {
+                System.out.println(person.toString());
+            }
 
-        session.getTransaction().commit();
-
-        sessionFactory.close();
+            session.getTransaction().commit();
+        } finally {
+            sessionFactory.close();
+        }
 
     }
 }
