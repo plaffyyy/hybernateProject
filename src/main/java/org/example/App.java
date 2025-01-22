@@ -17,10 +17,22 @@ public class App {
         SessionFactory sessionFactory = configuration.buildSessionFactory();
         Session session = sessionFactory.getCurrentSession();
 
+//        session.beginTransaction();
+//
+//        Person person1 = new Person("Kostya", 19);
+//        Person person2 = new Person("Kostya Zimin", 19);
+//        Person person3 = new Person("Julia", 19);
+//
+//        session.save(person1);
+//        session.save(person2);
+//        session.save(person3);
+//
+//        session.getTransaction().commit();
+
         session.beginTransaction();
 
-        Person person = session.get(Person.class, 1);
-        System.out.println(person.getName() + " " + person.getAge());
+        Person person = session.get(Person.class, 2);
+        person.setAge(29);
 
         session.getTransaction().commit();
 
