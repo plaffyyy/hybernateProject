@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,18 +27,12 @@ public class App {
         try {
             session.beginTransaction();
 
-            Person person = session.get(Person.class, 7);
-            Item item = new Item("NewItem", person);
-
-            //не порождает SQL, но необходимо, чтобы в кэше все было верно
+            Person person = new Person("Cascading test", 30);
+            Item item = new Item("Cascading item", person);
+            person.setItems(new ArrayList<>());
             person.getItems().add(item);
 
-            session.persist(item);
-
-//            Person person = session.get(Person.class, 7);
-//            System.out.println(person);
-//            List<Item> items = person.getItems();
-//            System.out.println(items);
+            session.persist( person);
 
             session.getTransaction().commit();
         } finally {
