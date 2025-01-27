@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.model.Actor;
 import org.example.model.Movie;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -26,29 +27,31 @@ public class App {
         try {
             session.beginTransaction();
 
-            Actor actor = session.get(Actor.class, 12);
-            actor.getMovies().forEach(movie -> System.out.println(movie.getName()));
+            Movie movie = session.get(Movie.class, 6);
+            System.out.println("Get movie");
 
-            Movie movieToRemove = actor.getMovies().remove(0);
-            movieToRemove.getActors().remove(actor);
-
-
-
-//            Movie movie = new Movie("ASdasdasd", 1984);
-//            Actor actor1 = new Actor("si", 12);
-//            Actor actor2 = new Actor("kostya", 19);
-//
-//            movie.setActors(new ArrayList<>(List.of(actor1, actor2)));
-//
-//            actor1.setMovies(new ArrayList<>(List.of(movie)));
-//            actor2.setMovies(new ArrayList<>(List.of(movie)));
-//
-//            session.save(movie);
-//
-//            session.save(actor1);
-//            session.save(actor2);
+            movie.getActors().forEach(e -> System.out.println(e.getName()));
+//            Hibernate.initialize(movie.getActors()); подгружаем связанные ленивые сущности
 
             session.getTransaction().commit();
+
+            //открываем сессию и транзакцию еще раз ( в любом месте в коде)
+            session = sessionFactory.getCurrentSession();
+            session.beginTransaction();
+
+            System.out.println("Внутри второй транзакции");
+
+            movie = session.merge(movie);
+
+            Hibernate.initialize(movie.getActors());
+
+            session.getTransaction().commit();
+
+            System.out.println("Вне второй сессии");
+
+            movie.getActors().forEach(e -> System.out.println(e.getName()));
+
+
         } finally {
             sessionFactory.close();
         }

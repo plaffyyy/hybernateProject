@@ -19,7 +19,7 @@ public class Movie {
     @Column(name = "year_release")
     private int yearRelease;
 
-    @ManyToMany(mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies",fetch = FetchType.LAZY)
     private List<Actor> actors;
 
     public Movie(String name, int yearRelease) {
